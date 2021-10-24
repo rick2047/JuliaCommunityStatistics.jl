@@ -1,0 +1,13 @@
+name = "JuliaCommunityStatistics"
+uuid = "1441ffe6-016a-495a-b63e-8588d3bf2bd6"
+authors = ["Paresh Mathur <paresh2047@gmail.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
