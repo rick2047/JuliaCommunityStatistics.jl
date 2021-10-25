@@ -2,12 +2,18 @@ module JuliaCommunityStatistics
 
 using GitHub
 using ProgressMeter
+using Memoize
 using Dates
 import GitHub: rate_limit
 
 export jlrepo, auth, rate_limit
 const auth = authenticate(ENV["GH_AUTH"])
 const jlrepo = repo("JuliaLang/julia"; auth=auth)
+
+@memoize Dict function get_commits_for_pr(pr)
+    cs, _ = commits(jlrepo, pr;auth=auth)
+    cs
+end
 
 export get_all_prs
 function get_all_prs(;state="all")
@@ -25,10 +31,10 @@ function get_commits(prs)
     prd = Dict()
     @showprogress 1 "Fetching... " for iPR in prs
         try
-            prd[iPR], _ = commits(jlrepo, iPR; auth=auth)
+            prd[iPR] = get_commits_for_pr(iPR)
         catch
             sleep_till_reset()
-            prd[iPR], _ = commits(jlrepo, iPR; auth=auth)
+            prd[iPR] = get_commits_for_pr(iPR)
         end
     end
     prd
