@@ -13,7 +13,7 @@ export get_all_prs
 function get_all_prs(;state="all")
     prs = PullRequest[]
     @showprogress 1 "Fetching... " for iP = 1:1000
-        thisprs, pd = pull_requests(jlrepo; auth=auth, page_limit=1, params = Dict("state"=>state, "page"=>iP))
+        thisprs, _ = pull_requests(jlrepo; auth=auth, page_limit=1, params = Dict("state"=>state, "page"=>iP))
         !isempty(thisprs) || break;
         prs = append!(prs, thisprs)
     end
