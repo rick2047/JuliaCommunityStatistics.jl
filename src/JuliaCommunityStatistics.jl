@@ -17,7 +17,7 @@ function get_all_prs(;state="all")
         !isempty(thisprs) || break;
         prs = append!(prs, thisprs)
     end
-    prs, pd
+    prs
 end
 
 export get_commits
