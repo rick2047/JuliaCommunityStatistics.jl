@@ -3,6 +3,11 @@ uuid = "1441ffe6-016a-495a-b63e-8588d3bf2bd6"
 authors = ["Paresh Mathur <paresh2047@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+GitHub = "bc5e4493-9b4d-5f90-b8aa-2b2bcaad7a26"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
+
 [compat]
 julia = "1"
 
