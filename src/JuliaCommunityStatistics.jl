@@ -6,8 +6,8 @@ using Dates
 import GitHub: rate_limit
 
 export jlrepo, auth, rate_limit
-const jlrepo = repo("JuliaLang/julia")
 const auth = authenticate(ENV["GH_AUTH"])
+const jlrepo = repo("JuliaLang/julia"; auth=auth)
 
 export get_all_prs
 function get_all_prs(;state="all")
@@ -41,7 +41,7 @@ function sleep_till_reset()
         return
     end
     reset_time = Dates.unix2datetime(rate_lim["reset"])
-    sleeptime = reset_time - now() + Dates.Second(5);
+    sleeptime = Dates.Millisecond(reset_time - now()) + Dates.Millisecond(2000)
     println("Sleeping for $(sleeptime)")
     sleep(sleeptime)
 end
