@@ -1,3 +1,4 @@
 /Manifest.toml
-/data
+/datatemp
 .gitignore
+.vscode/settings.json
