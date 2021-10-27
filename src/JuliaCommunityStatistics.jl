@@ -85,4 +85,15 @@ function commit_to_df(c)
         author = name(c.author)
     )
 end
+
+export changed_file_to_df
+function changed_file_to_df(cf)
+    DataFrame(
+        file = cf.filename,
+        status = cf.status,
+        changes = cf.changes,
+        additions = cf.additions,
+        deletions = cf.deletions
+    )
+end
 end
