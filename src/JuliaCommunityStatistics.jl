@@ -77,4 +77,12 @@ function pr_to_df(pr)
         merge_commit = pr.merge_commit_sha
     )
 end
+
+export commit_to_df
+function commit_to_df(c)
+    DataFrame(
+        sha = c.sha,
+        author = name(c.author)
+    )
+end
 end
