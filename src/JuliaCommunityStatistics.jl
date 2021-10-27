@@ -2,18 +2,14 @@ module JuliaCommunityStatistics
 
 using GitHub
 using ProgressMeter
-using Memoize
 using Dates
-import GitHub: rate_limit
+using DataFrames
+import GitHub: name
 
-export jlrepo, auth, rate_limit
+
+export jlrepo, auth
 const auth = authenticate(ENV["GH_AUTH"])
 const jlrepo = repo("JuliaLang/julia"; auth=auth)
-
-@memoize Dict function get_commits_for_pr(pr)
-    cs, _ = commits(jlrepo, pr;auth=auth)
-    cs
-end
 
 export get_all_prs
 function get_all_prs(;state="all")
@@ -31,10 +27,24 @@ function get_commits(prs)
     prd = Dict()
     @showprogress 1 "Fetching... " for iPR in prs
         try
-            prd[iPR] = get_commits_for_pr(iPR)
+            prd[iPR], _ = commits(jlrepo, pr;auth=auth)
         catch
             sleep_till_reset()
-            prd[iPR] = get_commits_for_pr(iPR)
+            prd[iPR], _ = commits(jlrepo, pr;auth=auth)
+        end
+    end
+    prd
+end
+
+export get_changed_files
+function get_changed_files(prs)
+    prd = Dict()
+    @showprogress 1 "Fetching... " for iPR in prs
+        try
+            prd[iPR] = pull_request_files(jlrepo, iPR;auth=auth)
+        catch
+            sleep_till_reset()
+            prd[iPR] = pull_request_files(jlrepo, iPR;auth=auth)
         end
     end
     prd
@@ -50,5 +60,21 @@ function sleep_till_reset()
     sleeptime = Dates.Millisecond(reset_time - now()) + Dates.Millisecond(2000)
     println("Sleeping for $(sleeptime)")
     sleep(sleeptime)
+end
+
+export pr_to_df
+function pr_to_df(pr)
+    DataFrame(
+        number = pr.number,
+        state = pr.state,
+        owner = name(pr.user),
+        created_at = pr.created_at,
+        closed_at = pr.closed_at,
+        updated_at = pr.updated_at,
+        merged_at = pr.merged_at,
+        base = name(pr.base),
+        head = name(pr.head),
+        merge_commit = pr.merge_commit_sha
+    )
 end
 end
