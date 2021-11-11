@@ -22,6 +22,31 @@ function get_all_prs(;state="all")
     prs
 end
 
+function get_pr_info_df(pr)
+    prdf = pr_to_df(pr)
+    cs, _ = commits(jlrepo, pr;auth=auth)
+    cfs = pull_request_files(jlrepo, pr;auth=auth)
+    cdfs = commit_to_df.(cs)
+    cfdfs = changed_file_to_df.(cfs)
+    insertcols!(prdf, :commits=>[cdfs], :changed_files=>[cfdfs])
+end
+
+export get_all_pr_info_df
+function get_all_pr_info_df(prs)
+    df = DataFrame()
+    @showprogress 1 "Fetching... " for pr in prs
+        try
+            prdf = get_pr_info_df(pr)
+            df = vcat(df, prdf)
+        catch
+            sleep_till_reset()
+            prdf = get_pr_info_df(pr)
+            df = vcat(df, prdf)
+        end
+    end
+    df
+end
+
 export get_commits
 function get_commits(prs)
     prd = Dict()
